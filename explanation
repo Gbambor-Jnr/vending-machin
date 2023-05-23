@@ -1,0 +1,25 @@
+1. npm i ts-node-dev --save-dev: thus library is like nodemon for the typescript
+2. outdir is when we build our code, where do you want to store the finalised jason file
+3. we run ordianry tsc to build our code
+
+4) normally when you work with docker we want to make sure we delete everything in the dist folder before we buildour code because an already built file will contain old file and wil cause problems to prevent this we use a library called rimraf. npm i rimraf --save-dev meaining it is a development dependency.
+
+5) rimraf is like a the rm -rf of linux that forces a removal or delete of file
+
+6) Dockerfile: 1) WRKDIR is the work directory main folder inside the container that we will be working with. when this is set and you run a command or copy a file, it is going to take place while it is inside the wrkdir directory
+   b) COPY package\*.json . means copy both package.json and package-lock.json and the second . means copy it into the WRKDIR
+   c) COPY . . means copy everything in this our project directory in the vscode that we are working. i.e from the src, the controllers, the models and everything and copy into the WRKDIR
+
+7) in docker-compose.yml, when defining the volumes, you provide 2 paths seperated by a column eg /x:/y. /x is the directory in your host computer and the /y is the directory where you want to sync it to on the working directory in your container. USually the /y is the same directory in your Dockerfile
+
+   b) volumes:
+
+   - .:/usr/src/app : #this is called a bind mount cos it binds all the local working dir into the container wrkdir
+     - /usr/src/app/node_modules #this provides a path to our node modules and tell it not to sync the node_modules folder with our local machine and this prevents the node_module from getting overwritten
+
+8) stdin_open: true: This option allows you to keep the stdin of the container open, which means you can enter input interactively. It enables you to attach to the container's stdin and interact with the running process inside the container.
+   tty: true: This option allocates a pseudo-TTY, which provides a terminal-like interface for the container. It allows you to view and interact with the output of the container's process as if you were working in a terminal.
+
+9) in the package.json scripts, dev, the --poll added makes the ts-node-dev check if the index.ts file changes reguklarly or not
+
+10) to rebuild your docker file just use: docker compose up --build

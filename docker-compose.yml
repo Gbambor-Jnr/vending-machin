@@ -1,0 +1,41 @@
+version: "3.7"
+
+services:
+  postgres-server:
+    image: postgres
+    restart: always
+    env_file: .env
+    environment:
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DATABASE: $POSTGRES_DATABASE
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_HOST_AUTH_METHOD: trust #ensures login to the databbase without password
+    volumes:
+      - db:/var/lib/postgres
+    ports:
+      - 5431:2345
+    expose:
+      - 5431
+
+  api-service:
+    depends_on:
+      - postgres-server
+    restart: unless-stopped
+    build: . # this means the dockerfile that will be used to build, what is the path? and we indicate it is in the current directory with that .
+    environment:
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DATABASE: $POSTGRES_DATABASE
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_HOST_AUTH_METHOD: trust #ensures login to the databbase without password
+    volumes:
+      - .:/usr/src/app #this is called a bind mount cos it binds all the local working dir into the container wrkdir
+      - /usr/src/app/node_modules #this provides a path to our node modules and tell it not to sync the node_modules folder with our local machine and this prevents the node_module from getting overwritten
+    ports:
+      - 3030:3030
+    expose:
+      - 3030
+    stdin_open: true
+    tty: true
+
+volumes:
+  db:
